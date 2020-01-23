@@ -16,13 +16,9 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.tuebingen.sfs.eie.components.lexdata.CLDFCognateJudgement;
-import de.tuebingen.sfs.eie.components.lexdata.CLDFCognateSet;
-import de.tuebingen.sfs.eie.components.lexdata.CLDFForm;
-import de.tuebingen.sfs.eie.components.lexdata.CLDFLanguage;
-import de.tuebingen.sfs.eie.components.lexdata.CLDFParameter;
-import de.tuebingen.sfs.eie.components.lexdata.CLDFWordlistDatabase;
-import de.tuebingen.sfs.psl.engine.core.ModelStorePSL;
+import de.tuebingen.sfs.cldfjava.lexdata.*;
+
+//import de.tuebingen.sfs.psl.engine.core.ModelStorePSL;
 
 public class CLDFImport {
 
