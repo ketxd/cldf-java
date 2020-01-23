@@ -2,5 +2,6 @@
 *.iml
 *.ipr
 *.iws
+vcs.xml
 target/
 src/test/
