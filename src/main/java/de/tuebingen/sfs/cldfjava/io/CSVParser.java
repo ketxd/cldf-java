@@ -1,4 +1,4 @@
-package de.tuebingen.sfs.cldfjava;
+package de.tuebingen.sfs.cldfjava.io;
 
 import java.util.List;
 import java.nio.CharBuffer;

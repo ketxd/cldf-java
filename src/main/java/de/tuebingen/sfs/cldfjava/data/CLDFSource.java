@@ -1,4 +1,4 @@
-package de.tuebingen.sfs.cldfjava.lexdata;
+package de.tuebingen.sfs.cldfjava.data;
 
 public class CLDFSource {
 	String sourceID;

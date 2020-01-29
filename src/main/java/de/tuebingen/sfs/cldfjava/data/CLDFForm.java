@@ -1,4 +1,4 @@
-package de.tuebingen.sfs.cldfjava.lexdata;
+package de.tuebingen.sfs.cldfjava.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;

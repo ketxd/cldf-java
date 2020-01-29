@@ -1,6 +1,6 @@
-package de.tuebingen.sfs.cldfjava;
+package de.tuebingen.sfs.cldfjava.data;
 
-import de.tuebingen.sfs.cldfjava.lexdata.*;
+import de.tuebingen.sfs.cldfjava.data.*;
 
 import java.util.*;
 import java.util.stream.Collectors;

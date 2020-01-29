@@ -1,4 +1,4 @@
-package de.tuebingen.sfs.cldfjava;
+package de.tuebingen.sfs.cldfjava.io;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.tuebingen.sfs.cldfjava.lexdata.*;
+import de.tuebingen.sfs.cldfjava.data.CLDFWordlistDatabase;
+import de.tuebingen.sfs.cldfjava.data.*;
 
 //import de.tuebingen.sfs.psl.engine.core.ModelStorePSL;
 
