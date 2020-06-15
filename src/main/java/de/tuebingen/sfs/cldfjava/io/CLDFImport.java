@@ -89,6 +89,7 @@ public class CLDFImport {
 					cogSetIDToCogset = readCognateSetCsv(path + "/" + cognateSetFileName, createColumnPropertyMap(cognateSetTableIndex, tables));
 				}
 				database = new CLDFWordlistDatabase(idToForm, langIDToLang, paramIDToParam, cognateIDToCognate, cogSetIDToCogset);
+				database.currentPath = cldfDirName;
 
 			} else {
 				throw new Error("The json file doesn't contain the Wordlist module!");
