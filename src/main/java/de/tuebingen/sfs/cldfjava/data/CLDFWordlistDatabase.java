@@ -38,7 +38,6 @@ public class CLDFWordlistDatabase {
 	}
 
 	public String getCurrentPath() {
-		System.out.println(currentPath);
 		return currentPath;
 	}
 	public List<CLDFLanguage> getAllLanguages() {
