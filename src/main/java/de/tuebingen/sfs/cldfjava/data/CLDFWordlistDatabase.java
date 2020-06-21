@@ -14,23 +14,24 @@ import java.util.stream.Collectors;
 public class CLDFWordlistDatabase {
 	//maps as defined by the relevant parts of the CLDF specification (the wordlist module, plus the inherited more general structure)
 	//generally, table rows are modeled as objects, whereas properties (single fields) are stored using elementary types
-	Map<String, CLDFForm> idToForm; //contents of form table (using integer IDs from typically first column)
+	Map<Integer, CLDFForm> idToForm; //contents of form table (using integer IDs from typically first column)
 	Map<String, CLDFLanguage> langIDToLang; //from foreign key into language table
 	Map<String, CLDFParameter> paramIDToParam; //from foreign key (concept ID) into parameters table (typically concepts.csv)
 
-	Map<String, CLDFCognateJudgement> cognateIDToCognate; //cognateID to cognate object
-	Map<String, CLDFCognateSet> cogsetIDToCogset; //only fill this if in separate table, store within CLDFForm if it's just cognate set IDs
+	//TODO: is it really needed?
+	Map<Integer, CLDFCognateJudgement> cognateIDToCognate; //cognateID to cognate object
+	Map<Integer, CLDFCognateSet> cogsetIDToCogset; //only fill this if in separate table, store within CLDFForm if it's just cognate set IDs
 	public String currentPath;
 
-	public CLDFWordlistDatabase(Map<String,CLDFForm> idToForm, Map<String,CLDFLanguage> langIDToLang, Map<String,CLDFParameter> paramIDToParam,
-								Map<String,CLDFCognateJudgement> cognateIDToCognate, Map<String,CLDFCognateSet> cogsetIDToCogset) {
+	public CLDFWordlistDatabase(Map<Integer,CLDFForm> idToForm, Map<String,CLDFLanguage> langIDToLang, Map<String,CLDFParameter> paramIDToParam,
+								Map<Integer,CLDFCognateJudgement> cognateIDToCognate, Map<Integer,CLDFCognateSet> cogsetIDToCogset) {
 		this.idToForm = idToForm;
 		this.langIDToLang = langIDToLang;
 		this.paramIDToParam = paramIDToParam;
 		this.cognateIDToCognate = cognateIDToCognate;
 		this.cogsetIDToCogset = cogsetIDToCogset;
 		fillAdditionalInfoOnForms();
-		setFormCogsets();
+		//setFormCogsets();
 	}
 
 	public void setCurrentPath(String path) {
@@ -40,6 +41,17 @@ public class CLDFWordlistDatabase {
 	public String getCurrentPath() {
 		return currentPath;
 	}
+
+//	public List<CLDFForm> getFormsForIds(List<Integer> ids) {
+//		System.out.println("IDS: " + ids);
+//		System.out.println("Form keys: " + idToForm.keySet());
+//		List<CLDFForm> forms = new ArrayList<>();
+//		for(Integer id : ids) {
+//			forms.add(idToForm.get(id));
+//		}
+//		return forms;
+//	}
+
 	public List<CLDFLanguage> getAllLanguages() {
 		List<CLDFLanguage> languages = new ArrayList<>(langIDToLang.values());
 		return languages;
@@ -57,7 +69,10 @@ public class CLDFWordlistDatabase {
 		return forms;
 
 	}
-	
+
+	public Map<Integer, CLDFForm> getFormsMap() {
+		return idToForm;
+	}
 	
 	public void fillAdditionalInfoOnForms()  {
 
@@ -176,57 +191,13 @@ public class CLDFWordlistDatabase {
 		return languages;
 	}
 
-	/**
-	 * Retrieves all the CLDFLanguage objects for a given language id.
-	 * @return
-	 */
-	public List<CLDFParameter> getParameterObjects(String paramID) {
-		List<CLDFParameter> parameters = new ArrayList<>();
+	public Map<Integer, Set<CLDFForm>> getCogsetToCognates() {
+		Map<Integer, Set<CLDFForm>> cognateSets = new HashMap<>();
 
-		paramIDToParam.values().stream().filter(param -> param.getParamID().equals(paramID)).forEach(
-				param -> {
-					parameters.add(param);
-				}
-				);
-		return parameters;
-	}
-
-
-
-
-	public Map<String, CLDFCognateSet> getCognateToCogset() {
-		Map<String, CLDFCognateSet> cognateIDToCogset = new HashMap<>();
-
-		for(String ref : cognateIDToCognate.keySet()) {
-			if(cogsetIDToCogset.containsKey(cognateIDToCognate.get(ref).getCognatesetReference())) {
-				cognateIDToCogset.put(ref, cogsetIDToCogset.get(cognateIDToCognate.get(ref).getCognatesetReference()));
-			}		
-		}
-		return cognateIDToCogset;
-	}
-
-	public Map<String, CLDFCognateJudgement> getCognateIDToCognate() {
-		return cognateIDToCognate;
-	}
-
-	public void setFormCogsets() {
-		for (Map.Entry<String, CLDFCognateJudgement> entry : cognateIDToCognate.entrySet()) {
-			String cognateID = entry.getKey();
-			String cogsetID = cognateIDToCognate.get(cognateID).getCognatesetReference();
-			String formID = entry.getValue().getFormReference();
-			CLDFForm form = idToForm.get(formID);
-			form.setCogsetID(cogsetID);
-		}
-	}
-
-
-	public Map<String, Set<CLDFForm>> getCogsetToCognates() {
-		Map<String, Set<CLDFForm>> cognateSets = new HashMap<>();
-
-		for (Map.Entry<String, CLDFCognateJudgement> entry : cognateIDToCognate.entrySet()) {
-			String cognateID = entry.getKey();
-			String cogsetID = cognateIDToCognate.get(cognateID).getCognatesetReference();
-			String formID = entry.getValue().getFormReference();
+		for (Map.Entry<Integer, CLDFCognateJudgement> entry : cognateIDToCognate.entrySet()) {
+			int cognateID = entry.getKey();
+			int cogsetID = cognateIDToCognate.get(cognateID).getCognatesetReference();
+			int formID = entry.getValue().getFormReference();
 			CLDFForm form = idToForm.get(formID);
 			if (!cognateSets.containsKey(cogsetID))
 				cognateSets.put(cogsetID, new HashSet<>());

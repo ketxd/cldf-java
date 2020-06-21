@@ -6,34 +6,34 @@ import java.util.List;
 import java.util.Map;
 
 public class CLDFForm {
-	String id; //the id used to reference forms in other tables (e.g. cognates.csv or borrowings.csv)
+	int id; //the id used to reference forms in other tables (e.g. cognates.csv or borrowings.csv)
 	String langID; //Language_ID
 	String paramID; //Parameter_ID
 	String form;
 	List<String> segments;
 	String origValue; //Value
 	String comment;
-	String cogsetID;
+//	int cogsetID;
 	Map<String,String> properties; //to store additional info, e.g. the original orthography, under their column name
 	String[] alignedSegments;
 	String iso;
 	String concepticon;
 
 	public CLDFForm() {
-		id = "";
+		id = -1;
 		langID = "";
 		paramID = "";
 		form = "";
 		origValue = "";
 		comment = "";
-		cogsetID = "";
+//		cogsetID = -1;
 		segments = new ArrayList<>();
 		properties = new HashMap<>();
 		alignedSegments = new String[]{};
 		iso = "";
 		concepticon = "";
 	}
-	
+
 	public String getIso() {
 		return iso;
 	}
@@ -64,18 +64,18 @@ public class CLDFForm {
 	public void setProperties(Map<String, String> properties) {
 		this.properties = properties;
 	}
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
-	public String getCogsetID() {
-		return cogsetID;
-	}
-	public void setCogsetID(String cogsetID) {
-		this.cogsetID = cogsetID;
-	}
+//	public int getCogsetID() {
+//		return cogsetID;
+//	}
+//	public void setCogsetID(int cogsetID) {
+//		this.cogsetID = cogsetID;
+//	}
 	public String getForm() {
 		return form;
 	}
@@ -112,6 +112,10 @@ public class CLDFForm {
 	}
 	public void setParamID(String paramID) {
 		this.paramID = paramID;
+	}
+
+	public String toString() {
+		return id + "\t" + form + "\t" + langID + "\t" + paramID;
 	}
 	
 
