@@ -77,13 +77,13 @@ public class CLDFImport {
 				String cognateFileName = tables.get(cognateTableIndex).get("url").asText();
 
 				//populating form, language and parameters maps (all have different methods because of different properties and object fields)
-				Map<String, CLDFForm> idToForm = readFormCsv(path + "/" + formFileName, createColumnPropertyMap(formTableIndex, tables));
+				Map<Integer, CLDFForm> idToForm = readFormCsv(path + "/" + formFileName, createColumnPropertyMap(formTableIndex, tables));
 				Map<String, CLDFLanguage> langIDToLang = readLanguageCsv(path + "/" + languageFileName, createColumnPropertyMap(languageTableIndex, tables));
 				Map<String, CLDFParameter> paramIDToParam = readParameterCsv(path + "/" + parameterFileName, createColumnPropertyMap(parameterTableIndex, tables));
-				Map<String, CLDFCognateJudgement> cognateIDToCognate = readCognateCsv(path + "/" + cognateFileName, createColumnPropertyMap(cognateTableIndex, tables));
+				Map<Integer, CLDFCognateJudgement> cognateIDToCognate = readCognateCsv(path + "/" + cognateFileName, createColumnPropertyMap(cognateTableIndex, tables));
 				
 				//populating Cognateset map only happens if there is a separate file for that
-				Map<String, CLDFCognateSet> cogSetIDToCogset = new HashMap<>();
+				Map<Integer, CLDFCognateSet> cogSetIDToCogset = new HashMap<>();
 				if(cognateSetTableIndex != -1) {
 					String cognateSetFileName = tables.get(cognateSetTableIndex).get("url").asText();
 					cogSetIDToCogset = readCognateSetCsv(path + "/" + cognateSetFileName, createColumnPropertyMap(cognateSetTableIndex, tables));
@@ -289,10 +289,10 @@ public class CLDFImport {
 	 * @param propertyColumns a map of properties and their columns
 	 * @return id to Form object map
 	 */
-	public static Map<String, CLDFForm> readFormCsv(String path, Map<String, String> propertyColumns) {
+	public static Map<Integer, CLDFForm> readFormCsv(String path, Map<String, String> propertyColumns) {
 		BufferedReader bf = null;
 		String line = "";
-		Map<String, CLDFForm> formTable = new HashMap<>();	
+		Map<Integer, CLDFForm> formTable = new HashMap<>();
 
 		try {
 			bf = new BufferedReader(new FileReader(path));
@@ -335,7 +335,7 @@ public class CLDFImport {
 						throw new FormattingException(line, path);
 					}
 					//setting required fields
-					formEntry.setId(column[idIdx]);
+					formEntry.setId(Integer.parseInt(column[idIdx]));
 					formEntry.setLangID(column[langIdx]);
 					formEntry.setParamID(column[paramIdx]);
 
@@ -353,7 +353,7 @@ public class CLDFImport {
 
 					formEntry.setProperties(properties);
 					//mapping object and its id
-					formTable.put(column[idIdx], formEntry);
+					formTable.put(Integer.parseInt(column[idIdx]), formEntry);
 				} catch(FormattingException e) {
 					
 				}
@@ -376,10 +376,10 @@ public class CLDFImport {
 	 * @param propertyColumns a map of properties and their columns
 	 * @return id to Cognate object map
 	 */
-	public static Map<String, CLDFCognateJudgement> readCognateCsv(String path, Map<String, String> propertyColumns) {
+	public static Map<Integer, CLDFCognateJudgement> readCognateCsv(String path, Map<String, String> propertyColumns) {
 		BufferedReader bf = null;
 		String line = "";
-		Map<String, CLDFCognateJudgement> cognateTable = new HashMap<>();
+		Map<Integer, CLDFCognateJudgement> cognateTable = new HashMap<>();
 
 		try {
 			bf = new BufferedReader(new FileReader(path));
@@ -400,12 +400,12 @@ public class CLDFImport {
 						throw new FormattingException(line, path);
 					}
 					//setting required fields
-					cognateEntry.setCognateID(column[idIdx]);
-					cognateEntry.setFormReference(column[formIdx]);
-					cognateEntry.setCognatesetReference(column[cogsetIdx]);
+					cognateEntry.setCognateID(Integer.parseInt(column[idIdx]));
+					cognateEntry.setFormReference(Integer.parseInt(column[formIdx]));
+					cognateEntry.setCognatesetReference(Integer.parseInt(column[cogsetIdx]));
 					
 					//mapping object and its id
-					cognateTable.put(column[idIdx], cognateEntry);
+					cognateTable.put(Integer.parseInt(column[idIdx]), cognateEntry);
 				}  catch(FormattingException e) {
 					
 				}
@@ -429,10 +429,10 @@ public class CLDFImport {
 	 * @param propertyColumns a map of properties and their columns
 	 * @return id to CognateSet object map
 	 */
-	public static Map<String, CLDFCognateSet> readCognateSetCsv(String path, Map<String, String> propertyColumns) {
+	public static Map<Integer, CLDFCognateSet> readCognateSetCsv(String path, Map<String, String> propertyColumns) {
 		BufferedReader bf = null;
 		String line = "";
-		Map<String, CLDFCognateSet> cognatesetTable = new HashMap<>();
+		Map<Integer, CLDFCognateSet> cognatesetTable = new HashMap<>();
 
 		try {
 			bf = new BufferedReader(new FileReader(path));
@@ -460,7 +460,7 @@ public class CLDFImport {
 					if(sourceIdx != -1) cognateSetEntry.setSources(Arrays.asList(column[sourceIdx].split(";")));
 					
 					//mapping object and its id
-					cognatesetTable.put(column[idIdx], cognateSetEntry);
+					cognatesetTable.put(Integer.parseInt(column[idIdx]), cognateSetEntry);
 				}  catch(FormattingException e) {
 					
 				}
