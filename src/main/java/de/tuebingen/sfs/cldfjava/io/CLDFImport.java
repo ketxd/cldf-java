@@ -343,7 +343,7 @@ public class CLDFImport {
 					if(formIdx != -1) formEntry.setForm(column[formIdx]);
 					if(valueIdx != -1) formEntry.setOrigValue(column[valueIdx]);
 					if(commentIdx != -1) formEntry.setComment(column[commentIdx]);
-					if(segmentsIdx != 1) formEntry.setSegments(Arrays.asList(column[segmentsIdx].split(" ")));
+					if(segmentsIdx != 1) formEntry.setSegments(column[segmentsIdx].split(" "));
 
 					//for the indecies of remained columns, put them into a property map
 					for(int j=0; j<remainedColumns.size(); j++) {

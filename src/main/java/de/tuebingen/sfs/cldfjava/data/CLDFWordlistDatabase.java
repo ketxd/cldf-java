@@ -31,7 +31,6 @@ public class CLDFWordlistDatabase {
 		this.cognateIDToCognate = cognateIDToCognate;
 		this.cogsetIDToCogset = cogsetIDToCogset;
 		fillAdditionalInfoOnForms();
-		//setFormCogsets();
 	}
 
 	public void setCurrentPath(String path) {
@@ -42,15 +41,6 @@ public class CLDFWordlistDatabase {
 		return currentPath;
 	}
 
-//	public List<CLDFForm> getFormsForIds(List<Integer> ids) {
-//		System.out.println("IDS: " + ids);
-//		System.out.println("Form keys: " + idToForm.keySet());
-//		List<CLDFForm> forms = new ArrayList<>();
-//		for(Integer id : ids) {
-//			forms.add(idToForm.get(id));
-//		}
-//		return forms;
-//	}
 
 	public List<CLDFLanguage> getAllLanguages() {
 		List<CLDFLanguage> languages = new ArrayList<>(langIDToLang.values());
@@ -95,26 +85,6 @@ public class CLDFWordlistDatabase {
 	public List<String> listLanguageIDs() {
 		List<String> languageIDs = new ArrayList<>(langIDToLang.keySet());
 		return languageIDs;
-	}
-
-	/**
-	 * Lists all the language ISO codes used in the database.
-	 * @return
-	 */
-	public List<String> listLanguageISOs() {
-		List<String> languageISOs = new ArrayList<>();
-		for (CLDFLanguage lang : langIDToLang.values())
-			languageISOs.add(lang.getIso639P3code());
-		return languageISOs;
-	}
-
-	/**
-	 * Lists all the parameter IDs used in the database.
-	 * @return
-	 */
-	public List<String> listParameterIDs() {
-		List<String> paramIDs = new ArrayList<>(paramIDToParam.keySet());
-		return paramIDs;
 	}
 
 	/**
@@ -174,21 +144,6 @@ public class CLDFWordlistDatabase {
 	 */
 	public CLDFLanguage getLanguageObject(String langID) {
 		return langIDToLang.getOrDefault(langID, null);
-	}
-
-	/**
-	 * Retrieves all the CLDFLanguage objects for a given language id.
-	 * @return
-	 */
-	public List<CLDFLanguage> getLanguageObjects(String langID) {
-		List<CLDFLanguage> languages = new ArrayList<>();
-
-		langIDToLang.values().stream().filter(lang -> lang.getLangID().equals(langID)).forEach(
-				lang -> {
-					languages.add(lang);
-				}
-				);
-		return languages;
 	}
 
 	public Map<Integer, Set<CLDFForm>> getCogsetToCognates() {

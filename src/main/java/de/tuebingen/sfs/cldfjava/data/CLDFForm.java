@@ -10,14 +10,17 @@ public class CLDFForm {
 	String langID; //Language_ID
 	String paramID; //Parameter_ID
 	String form;
-	List<String> segments;
 	String origValue; //Value
 	String comment;
+
+	String orthography;
 //	int cogsetID;
 	Map<String,String> properties; //to store additional info, e.g. the original orthography, under their column name
-	String[] alignedSegments;
 	String iso;
 	String concepticon;
+
+	String[] alignedSegments;
+	String[] segments;
 
 	public CLDFForm() {
 		id = -1;
@@ -27,11 +30,34 @@ public class CLDFForm {
 		origValue = "";
 		comment = "";
 //		cogsetID = -1;
-		segments = new ArrayList<>();
 		properties = new HashMap<>();
-		alignedSegments = new String[]{};
 		iso = "";
 		concepticon = "";
+		orthography="";
+	}
+
+	public String[] getAlignedSegments() {
+		return alignedSegments;
+	}
+
+	public void setAlignedSegments(String[] alignedSegments) {
+		this.alignedSegments = alignedSegments;
+	}
+
+	public String[] getSegments() {
+		return alignedSegments;
+	}
+
+	public void setSegments(String[] segments) {
+		this.segments = segments;
+	}
+
+	public String getOrthography() {
+		return orthography;
+	}
+
+	public void setOrthography(String orthography) {
+		this.orthography = orthography;
 	}
 
 	public String getIso() {
@@ -49,14 +75,7 @@ public class CLDFForm {
 	public void setConcepticon(String concepticon) {
 		this.concepticon = concepticon;
 	}
-	
-	public String[] getAlignedSegments() {
-		return alignedSegments;
-	}
 
-	public void setAlignedSegments(String[] alignedSegments) {
-		this.alignedSegments = alignedSegments;
-	}
 	
 	public Map<String, String> getProperties() {
 		return properties;
@@ -81,12 +100,6 @@ public class CLDFForm {
 	}
 	public void setForm(String form) {
 		this.form = form;
-	}
-	public List<String> getSegments() {
-		return segments;
-	}
-	public void setSegments(List<String> segments) {
-		this.segments = segments;
 	}
 	public String getOrigValue() {
 		return origValue;
