@@ -73,7 +73,9 @@ public class CLDFLanguage {
 	public void setLongitude(float longitude) {
 		this.longitude = longitude;
 	}
-
+	public String toString() {
+		return langID + "\t" + name + "\t" + iso639P3code + "\t" + glottocode + "\t" + family + "\t" + properties;
+	}
 	
 	//TODO: write appropriate constructor, getters, treatment of gaps (default values)
 }

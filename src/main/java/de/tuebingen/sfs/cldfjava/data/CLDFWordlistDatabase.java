@@ -26,6 +26,8 @@ public class CLDFWordlistDatabase {
 	public CLDFWordlistDatabase() {
 		this.langIDToLang=new HashMap<>();
 		this.paramIDToParam=new HashMap<>();
+		this.idToForm=new HashMap<>();
+		this.cognateIDToCognate=new HashMap<>();
 	}
 
 	public CLDFWordlistDatabase(Map<Integer,CLDFForm> idToForm, Map<String,CLDFLanguage> langIDToLang, Map<String,CLDFParameter> paramIDToParam,

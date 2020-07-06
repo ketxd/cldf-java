@@ -89,12 +89,6 @@ public class CLDFForm {
 	public void setId(int id) {
 		this.id = id;
 	}
-//	public int getCogsetID() {
-//		return cogsetID;
-//	}
-//	public void setCogsetID(int cogsetID) {
-//		this.cogsetID = cogsetID;
-//	}
 	public String getForm() {
 		return form;
 	}
@@ -128,7 +122,7 @@ public class CLDFForm {
 	}
 
 	public String toString() {
-		return id + "\t" + form + "\t" + langID + "\t" + paramID;
+		return id + "\t" + form + "\t" + langID + "\t" + paramID + "\t" + properties;
 	}
 	
 
