@@ -23,6 +23,11 @@ public class CLDFWordlistDatabase {
 	Map<Integer, CLDFCognateSet> cogsetIDToCogset; //only fill this if in separate table, store within CLDFForm if it's just cognate set IDs
 	public String currentPath;
 
+	public CLDFWordlistDatabase() {
+		this.langIDToLang=new HashMap<>();
+		this.paramIDToParam=new HashMap<>();
+	}
+
 	public CLDFWordlistDatabase(Map<Integer,CLDFForm> idToForm, Map<String,CLDFLanguage> langIDToLang, Map<String,CLDFParameter> paramIDToParam,
 								Map<Integer,CLDFCognateJudgement> cognateIDToCognate, Map<Integer,CLDFCognateSet> cogsetIDToCogset) {
 		this.idToForm = idToForm;
@@ -41,6 +46,14 @@ public class CLDFWordlistDatabase {
 		return currentPath;
 	}
 
+
+	public void setLanguages(Map<String, CLDFLanguage> languages) {
+		this.langIDToLang=languages;
+	}
+
+	public void setConcepts(Map<String, CLDFParameter> concepts) {
+		this.paramIDToParam=concepts;
+	}
 
 	public List<CLDFLanguage> getAllLanguages() {
 		List<CLDFLanguage> languages = new ArrayList<>(langIDToLang.values());
