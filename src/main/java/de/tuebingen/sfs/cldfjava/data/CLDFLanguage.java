@@ -6,7 +6,7 @@ import java.util.Map;
 public class CLDFLanguage {
 	//TODO: refactor ISO
 	String langID; //the foreign key used by the rest of the database
-	String iso639P3code;
+	String iso;
 	String glottocode;
 	String name;
 	String family;
@@ -16,7 +16,7 @@ public class CLDFLanguage {
 	
 	public CLDFLanguage() {
 		langID = "";
-		iso639P3code = "";
+		iso = "";
 		glottocode = "";
 		name = "";
 		latitude = Float.NaN;
@@ -43,11 +43,11 @@ public class CLDFLanguage {
 	public void setLangID(String langID) {
 		this.langID = langID;
 	}
-	public String getIso639P3code() {
-		return iso639P3code;
+	public String getIso() {
+		return iso;
 	}
-	public void setIso639P3code(String iso639p3code) {
-		iso639P3code = iso639p3code;
+	public void setIso(String iso639p3code) {
+		iso = iso639p3code;
 	}
 	public String getGlottocode() {
 		return glottocode;
@@ -74,7 +74,7 @@ public class CLDFLanguage {
 		this.longitude = longitude;
 	}
 	public String toString() {
-		return langID + "\t" + name + "\t" + iso639P3code + "\t" + glottocode + "\t" + family + "\t" + properties;
+		return langID + "\t" + name + "\t" + iso + "\t" + glottocode + "\t" + family + "\t" + properties;
 	}
 	
 	//TODO: write appropriate constructor, getters, treatment of gaps (default values)

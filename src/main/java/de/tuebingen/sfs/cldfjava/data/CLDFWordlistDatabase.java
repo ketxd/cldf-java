@@ -1,7 +1,5 @@
 package de.tuebingen.sfs.cldfjava.data;
 
-import de.tuebingen.sfs.cldfjava.data.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +67,7 @@ public class CLDFWordlistDatabase {
 
 	}
 
+
 	public List<CLDFForm> getAllForms() {
 		List<CLDFForm> forms = new ArrayList<>(idToForm.values());
 		return forms;
@@ -82,7 +81,7 @@ public class CLDFWordlistDatabase {
 	public void fillAdditionalInfoOnForms()  {
 
 		for(CLDFForm form : idToForm.values()) {
-			String iso = langIDToLang.values().stream().filter(o -> o.getLangID().equals(form.getLangID())).findFirst().get().getIso639P3code();
+			String iso = langIDToLang.values().stream().filter(o -> o.getLangID().equals(form.getLangID())).findFirst().get().getIso();
 			String concepticon = paramIDToParam.values().stream().filter(o -> o.getParamID().equals(form.getParamID())).findFirst().get().getProperties().get("concepticon_proposed");
 			if(concepticon == null) {
 				concepticon = "";

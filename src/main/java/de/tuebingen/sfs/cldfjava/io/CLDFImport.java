@@ -251,7 +251,7 @@ public class CLDFImport {
 					languageEntry.setLangID(column[idIdx]);
 
 					//settings fields that aren't required by checking whether they exist
-					if(isoIdx != -1) languageEntry.setIso639P3code(column[isoIdx]);
+					if(isoIdx != -1) languageEntry.setIso(column[isoIdx]);
 					if(glottoIdx != -1) languageEntry.setGlottocode(column[glottoIdx]);
 					if(nameIdx != -1) languageEntry.setName(column[nameIdx]);
 					if(familyIdx != -1) languageEntry.setFamily(column[familyIdx]);
