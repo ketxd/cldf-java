@@ -46,36 +46,16 @@ public class CLDFWordlistDatabase {
 		return currentPath;
 	}
 
-
-	public void setLanguages(Map<String, CLDFLanguage> languages) {
-		this.langIDToLang=languages;
-	}
-
-	public void setConcepts(Map<String, CLDFParameter> concepts) {
-		this.paramIDToParam=concepts;
-	}
-
-	public List<CLDFLanguage> getAllLanguages() {
-		List<CLDFLanguage> languages = new ArrayList<>(langIDToLang.values());
-		return languages;
-
-	}
-
-	public List<CLDFParameter> getAllConcepts() {
-		List<CLDFParameter> concepts = new ArrayList<>(paramIDToParam.values());
-		return concepts;
-
-	}
-
-
-	public List<CLDFForm> getAllForms() {
-		List<CLDFForm> forms = new ArrayList<>(idToForm.values());
-		return forms;
-
-	}
-
 	public Map<Integer, CLDFForm> getFormsMap() {
 		return idToForm;
+	}
+
+	public Map<String, CLDFLanguage> getLanguageMap() {
+		return langIDToLang;
+	}
+
+	public Map<String, CLDFParameter> getConceptMap() {
+		return paramIDToParam;
 	}
 	
 	public void fillAdditionalInfoOnForms()  {
@@ -90,74 +70,6 @@ public class CLDFWordlistDatabase {
 			form.setConcepticon(concepticon);
 			
 		}
-	}
-
-	/**
-	 * Lists all the language IDs used in the database.
-	 * @return
-	 */
-	public List<String> listLanguageIDs() {
-		List<String> languageIDs = new ArrayList<>(langIDToLang.keySet());
-		return languageIDs;
-	}
-
-	/**
-	 * Retrieves all the CLDFForm object for a given language-parameter pair.
-	 * @return
-	 */
-	public List<CLDFForm> getForms(String langID, String paramID) {
-		List<CLDFForm> forms = new ArrayList<>();
-
-		idToForm.values().stream().filter(form -> form.getLangID().equals(langID) && form.getParamID().equals(paramID)).forEach(
-				form -> {
-					forms.add(form);
-				}
-				);
-		return forms;
-	}
-
-	/**
-	 * Retrieves all the CLDFForm objects for given languages.
-	 * @return
-	 */
-	public List<CLDFForm> getFormsForLanguages(List<String> languageIDs) {
-		List<CLDFForm> forms = new ArrayList<>();
-		for(String language : languageIDs) {
-			idToForm.values().stream().filter(form -> form.getLangID().equals(language)).forEach(
-					form -> { 
-						forms.add(form);
-					});}
-		return forms;
-	}
-	
-	public List<CLDFForm> getFormsForLanguage(String languageID) {
-		return idToForm.values().stream().filter(form -> form.getLangID().equals(languageID)).collect(Collectors.toList());
-	}
-	
-	public List<CLDFForm> getFormsForConcept(String conceptID) {
-		return idToForm.values().stream().filter(form -> form.getParamID().equals(conceptID)).collect(Collectors.toList());
-	}
-
-	/**
-	 * Retrieves all the CLDFForm objects for given parameters.
-	 * @return
-	 */
-	public List<CLDFForm> getFormsForParam(List<String> conceptIDs) {
-		List<CLDFForm> forms = new ArrayList<>();
-		for(String concept :conceptIDs) {
-			idToForm.values().stream().filter(form -> form.getParamID().equals(concept)).forEach(
-					form -> { 
-						forms.add(form);
-					});}
-		return forms;
-	}
-
-	/**
-	 * Retrieves all the CLDFLanguage objects for a given language id.
-	 * @return
-	 */
-	public CLDFLanguage getLanguageObject(String langID) {
-		return langIDToLang.getOrDefault(langID, null);
 	}
 
 	public Map<Integer, Set<CLDFForm>> getCogsetToCognates() {
@@ -176,5 +88,4 @@ public class CLDFWordlistDatabase {
 		return cognateSets;
 	}
 
-	//TODO: add all kinds of additional getters here, but pragmatically depending on actual need in the user interface
 }
