@@ -57,12 +57,13 @@ public class CLDFWordlistDatabase {
 	public Map<String, CLDFParameter> getConceptMap() {
 		return paramIDToParam;
 	}
-	
+
+	//TODO: getting it from maps
 	public void fillAdditionalInfoOnForms()  {
 
 		for(CLDFForm form : idToForm.values()) {
 			String iso = langIDToLang.values().stream().filter(o -> o.getLangID().equals(form.getLangID())).findFirst().get().getIso();
-			String concepticon = paramIDToParam.values().stream().filter(o -> o.getParamID().equals(form.getParamID())).findFirst().get().getProperties().get("concepticon_proposed");
+			String concepticon = paramIDToParam.values().stream().filter(o -> o.getParamID().equals(form.getParamID())).findFirst().get().getConcepticon();
 			if(concepticon == null) {
 				concepticon = "";
 			}

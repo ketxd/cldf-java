@@ -7,15 +7,31 @@ public class CLDFParameter {
 	String paramID; //the foreign key used by the rest of the database
 	String name;
 	String concepticonID;
+	String concepticon;
+	String semField;
 	Map<String,String> properties; //to store additional info
 	
 	public CLDFParameter() {
 		paramID = "";
 		name = "";
 		concepticonID = "";
+		concepticon="";
+		semField="";
 		properties = new HashMap<>();
 	}
-	
+
+	public void setSemanticField(String semField) {
+		this.semField=semField;
+	}
+	public String getSemanticField() {
+		return semField;
+	}
+	public void setConcepticon(String concepticon) {
+		this.concepticon = concepticon;
+	}
+	public String getConcepticon() {
+		return this.concepticon;
+	}
 	public Map<String, String> getProperties() {
 		return properties;
 	}
@@ -39,5 +55,8 @@ public class CLDFParameter {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String toString() {
+		return "ID: {" + paramID + "}, Name: {" + name + "}, ConcID: {" + concepticonID + "}, Conc: {" + concepticon + "}, SemField: {" + semField + "}";
 	}
 }

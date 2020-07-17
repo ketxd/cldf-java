@@ -137,16 +137,26 @@ public class CLDFImport {
 		Map<String, CLDFParameter> parameterTable = new HashMap<>();
 		try {
 			bf = new BufferedReader(new FileReader(path));
-			List<String> columns = Arrays.asList(bf.readLine().split(","));  //all columns are split by comma
+			List<String> columns = Arrays.asList(bf.readLine().toLowerCase().split(","));  //all columns are split by comma
 			
 			//retrieving column indecies of each property, that will help us extract values and fill Object fields.
 			//-1 needed when the field is not required, and therefore won't be extracted if not found
-			int idIdx = columns.indexOf(propertyColumns.get("id"));
-			int nameIdx = propertyColumns.containsKey("name") ? columns.indexOf(propertyColumns.get("name")) : -1;
-			int concIdx = propertyColumns.containsKey("concepticonReference") ? columns.indexOf(propertyColumns.get("concepticonReference")) : -1;
+			int idIdx = columns.indexOf(propertyColumns.get("id").toLowerCase());
+			int nameIdx = propertyColumns.containsKey("name") ? columns.indexOf(propertyColumns.get("name").toLowerCase()) : -1;
+			int concIdx = propertyColumns.containsKey("concepticonReference") ? columns.indexOf(propertyColumns.get("concepticonReference").toLowerCase()) : -1;
+			int semField = columns.contains("semantic_field") ? columns.indexOf("semantic_field") : -1;
+			int concepiconIdx=-1;
+			if(columns.contains("concepticon_proposed")) {
+				concepiconIdx=columns.indexOf("concepticon_proposed");
+			} else if(columns.contains("concepticon_gloss")) {
+				concepiconIdx=columns.indexOf("concepticon_gloss");
+			} else if(columns.contains("concepticon")) {
+				concepiconIdx=columns.indexOf("concepticon");
+			}
+
 			//in order to fill the "properties" map, for the columns that don't have a separate filed
 			//make a list of column indecies that were used
-			List<Integer> usedColumns = Arrays.asList(idIdx, nameIdx, concIdx);
+			List<Integer> usedColumns = Arrays.asList(idIdx, nameIdx, concIdx, concepiconIdx, semField);
 			List<Integer> remainedColumns = new ArrayList<>();
 
 			//fill a new list with unused columns with the remaining indecies
@@ -172,6 +182,8 @@ public class CLDFImport {
 					//settings fields that aren't required by checking whether they exist
 					if(nameIdx != -1) parameterEntry.setName(column[nameIdx]);
 					if(concIdx != -1) parameterEntry.setConcepticonID(column[concIdx]);
+					if(concepiconIdx != -1) parameterEntry.setConcepticon(column[concepiconIdx]);
+					if(semField != -1) parameterEntry.setSemanticField(column[semField]);
 
 					//for the indecies of remained columns, put them into a property map
 					for(int j=0; j<remainedColumns.size(); j++) {
@@ -183,7 +195,7 @@ public class CLDFImport {
 					//mapping object and its id
 					parameterTable.put(column[idIdx], parameterEntry);
 				}    catch(FormattingException e) {
-					
+					e.printStackTrace();
 				}
 
 			}
