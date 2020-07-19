@@ -138,7 +138,7 @@ public class CLDFImport {
 		try {
 			bf = new BufferedReader(new FileReader(path));
 			List<String> columns = Arrays.asList(bf.readLine().toLowerCase().split(","));  //all columns are split by comma
-			
+
 			//retrieving column indecies of each property, that will help us extract values and fill Object fields.
 			//-1 needed when the field is not required, and therefore won't be extracted if not found
 			int idIdx = columns.indexOf(propertyColumns.get("id").toLowerCase());
@@ -323,10 +323,16 @@ public class CLDFImport {
 			int valueIdx = propertyColumns.containsKey(value) ? columns.indexOf(propertyColumns.get(value)) : -1;
 			int commentIdx = propertyColumns.containsKey("comment") ? columns.indexOf(propertyColumns.get("comment")) : -1;
 			int segmentsIdx = propertyColumns.containsKey("segments") ? columns.indexOf(propertyColumns.get("segments")) : -1;
+			int orthoIdx = -1;
+			if(propertyColumns.containsKey("Orthography")) {
+				orthoIdx = columns.indexOf(propertyColumns.get("Orthography"));
+			} else if(propertyColumns.containsKey("Local_Orthography")) {
+				orthoIdx = columns.indexOf(propertyColumns.get("Local_Orthography"));
+			}
 
 			//in order to fill the "properties" map, for the columns that don't have a separate filed
 			//make a list of column indecies that were used
-			List<Integer> usedColumns = Arrays.asList(idIdx, langIdx, paramIdx,formIdx , valueIdx, commentIdx, segmentsIdx);
+			List<Integer> usedColumns = Arrays.asList(idIdx, langIdx, paramIdx,formIdx , valueIdx, commentIdx, segmentsIdx, orthoIdx);
 			List<Integer> remainedColumns = new ArrayList<>();
 
 			//fill a new list with unused columns with the remaining indecies
@@ -355,7 +361,8 @@ public class CLDFImport {
 					if(formIdx != -1) formEntry.setForm(column[formIdx]);
 					if(valueIdx != -1) formEntry.setOrigValue(column[valueIdx]);
 					if(commentIdx != -1) formEntry.setComment(column[commentIdx]);
-					if(segmentsIdx != 1) formEntry.setSegments(column[segmentsIdx].split(" "));
+					if(segmentsIdx != -1) formEntry.setSegments(column[segmentsIdx].split(" "));
+					if(orthoIdx != -1) formEntry.setOrthography(column[orthoIdx]);
 
 					//for the indecies of remained columns, put them into a property map
 					for(int j=0; j<remainedColumns.size(); j++) {
