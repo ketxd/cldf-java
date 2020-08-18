@@ -73,4 +73,29 @@ public class CLDFWordlistDatabase {
 		return cognateSets;
 	}
 
+	public List<String> listLanguageISOs() {
+		ArrayList<String> isoCodes = new ArrayList<String>(langIDToLang.size());
+		for (String langID : langIDToLang.keySet()) {
+			isoCodes.add(langIDToLang.get(langID).getIso());
+		}
+		return isoCodes;
+	}
+
+	public List<Integer> listFormIdsForLangId(String langID) {
+		List<Integer> formIDs = new LinkedList<Integer>();
+		for (int formID : idToForm.keySet()) {
+			if (langID.equals(idToForm.get(formID).getLangID()))
+				formIDs.add(formID);
+		}
+		return formIDs;
+	}
+
+	public String searchLangIdForIsoCode(String isoCode) {
+		for (CLDFLanguage lang : langIDToLang.values()) {
+			if (isoCode.equals(lang.iso)) {
+				return lang.langID;
+			}
+		}
+		return null;
+	}
 }
