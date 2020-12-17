@@ -3,12 +3,12 @@ package de.tuebingen.sfs.cldfjava.data;
 public class CLDFCognateJudgement {
 	int cognateID;
 	int formReference;
-	int cognatesetReference;
+	String cognatesetReference;
 	
 	public CLDFCognateJudgement() {
 		cognateID = -1;
 		formReference = -1;
-		cognatesetReference = -1;
+		cognatesetReference = "";
 	}
 	
 	public int getCognateID() {
@@ -23,10 +23,10 @@ public class CLDFCognateJudgement {
 	public void setFormReference(int formReference) {
 		this.formReference = formReference;
 	}
-	public int getCognatesetReference() {
+	public String getCognatesetReference() {
 		return cognatesetReference;
 	}
-	public void setCognatesetReference(int cognatesetReference) {
+	public void setCognatesetReference(String cognatesetReference) {
 		this.cognatesetReference = cognatesetReference;
 	}
 }

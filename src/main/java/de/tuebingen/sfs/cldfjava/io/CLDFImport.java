@@ -7,11 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +21,9 @@ public class CLDFImport {
 
 	public static CSVParser parser;
 	public static CLDFWordlistDatabase database;
+	private static Map<String, Integer> formsOldToNew;
+	private static Map<Integer, String> formsNewToOld;
+	private static Map<String, Integer> cognateIdMap;
 	/**
 	 * TODO: This should build a CLDFDatabase object (see structure and interface there) from a directory with CLDF files.
 	 *       The module we want to fully support is described here: https://github.com/cldf/cldf/tree/master/modules/Wordlist
@@ -40,7 +39,9 @@ public class CLDFImport {
 		File json;
 		byte[] mapData;
 		parser = new CSVParser();
-		
+		formsOldToNew =new HashMap<>();
+		cognateIdMap=new HashMap<>();
+		formsNewToOld =new HashMap<>();
 
 		try {
 			path = new File(cldfDirName);
@@ -83,12 +84,13 @@ public class CLDFImport {
 				Map<Integer, CLDFCognateJudgement> cognateIDToCognate = readCognateCsv(path + "/" + cognateFileName, createColumnPropertyMap(cognateTableIndex, tables));
 				
 				//populating Cognateset map only happens if there is a separate file for that
-				Map<Integer, CLDFCognateSet> cogSetIDToCogset = new HashMap<>();
+				Map<String, CLDFCognateSet> cogSetIDToCogset = new HashMap<>();
 				if(cognateSetTableIndex != -1) {
 					String cognateSetFileName = tables.get(cognateSetTableIndex).get("url").asText();
 					cogSetIDToCogset = readCognateSetCsv(path + "/" + cognateSetFileName, createColumnPropertyMap(cognateSetTableIndex, tables));
 				}
-				database = new CLDFWordlistDatabase(idToForm, langIDToLang, paramIDToParam, cognateIDToCognate, cogSetIDToCogset);
+				formsOldToNew.clear();
+				database = new CLDFWordlistDatabase(idToForm, langIDToLang, paramIDToParam, cognateIDToCognate, cogSetIDToCogset, formsNewToOld);
 				database.currentPath = cldfDirName;
 
 			} else {
@@ -121,6 +123,7 @@ public class CLDFImport {
 			String columnName = column.get("name").asText();
 
 			propertyToColumn.put(property, columnName);
+
 		}
 		return propertyToColumn;
 	}
@@ -305,7 +308,7 @@ public class CLDFImport {
 		BufferedReader bf = null;
 		String line = "";
 		Map<Integer, CLDFForm> formTable = new HashMap<>();
-
+		int formID=0;
 		try {
 			bf = new BufferedReader(new FileReader(path));
 			List<String> columns = Arrays.asList(bf.readLine().split(","));  //all columns are split by comma
@@ -353,7 +356,10 @@ public class CLDFImport {
 						throw new FormattingException(line, path);
 					}
 					//setting required fields
-					formEntry.setId(Integer.parseInt(column[idIdx]));
+					//if form id is a string, create an integer ID
+					formsOldToNew.put(column[idIdx],formID);
+					formsNewToOld.put(formID,column[idIdx]);
+					formEntry.setId(formID);
 					formEntry.setLangID(column[langIdx]);
 					formEntry.setParamID(column[paramIdx]);
 
@@ -372,9 +378,10 @@ public class CLDFImport {
 
 					formEntry.setProperties(properties);
 					//mapping object and its id
-					formTable.put(Integer.parseInt(column[idIdx]), formEntry);
+					formTable.put(formID, formEntry);
+					formID++;
 				} catch(FormattingException e) {
-					
+
 				}
 			}
 			bf.close();
@@ -399,7 +406,7 @@ public class CLDFImport {
 		BufferedReader bf = null;
 		String line = "";
 		Map<Integer, CLDFCognateJudgement> cognateTable = new HashMap<>();
-
+		int cognateId=0;
 		try {
 			bf = new BufferedReader(new FileReader(path));
 			List<String> columns = Arrays.asList(bf.readLine().split(",")); //all columns are split by comma
@@ -418,13 +425,19 @@ public class CLDFImport {
 					if(column.length != columns.size()) {
 						throw new FormattingException(line, path);
 					}
-					//setting required fields
-					cognateEntry.setCognateID(Integer.parseInt(column[idIdx]));
-					cognateEntry.setFormReference(Integer.parseInt(column[formIdx]));
-					cognateEntry.setCognatesetReference(Integer.parseInt(column[cogsetIdx]));
-					
-					//mapping object and its id
-					cognateTable.put(Integer.parseInt(column[idIdx]), cognateEntry);
+					if(formsOldToNew.containsKey(column[formIdx])) {
+						//setting required fields
+						int currentCogset=-1;
+						cognateIdMap.put(column[idIdx],cognateId);
+						cognateEntry.setCognateID(cognateId);
+						cognateEntry.setFormReference(formsOldToNew.get(column[formIdx]));
+						cognateEntry.setCognatesetReference(column[cogsetIdx]);
+
+
+						//mapping object and its id
+						cognateTable.put(cognateId, cognateEntry);
+						cognateId++;
+					}
 				}  catch(FormattingException e) {
 					
 				}
@@ -438,7 +451,7 @@ public class CLDFImport {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		cognateIdMap.clear();
 		return cognateTable;
 	}
 	
@@ -448,11 +461,10 @@ public class CLDFImport {
 	 * @param propertyColumns a map of properties and their columns
 	 * @return id to CognateSet object map
 	 */
-	public static Map<Integer, CLDFCognateSet> readCognateSetCsv(String path, Map<String, String> propertyColumns) {
+	public static Map<String, CLDFCognateSet> readCognateSetCsv(String path, Map<String, String> propertyColumns) {
 		BufferedReader bf = null;
 		String line = "";
-		Map<Integer, CLDFCognateSet> cognatesetTable = new HashMap<>();
-
+		Map<String, CLDFCognateSet> cognatesetTable = new HashMap<>();
 		try {
 			bf = new BufferedReader(new FileReader(path));
 			List<String> columns = Arrays.asList(bf.readLine().split(",")); //all columns are split by comma
@@ -477,9 +489,9 @@ public class CLDFImport {
 					//settings fields that aren't required by checking whether they exist
 					if(descriptionIdx != -1) cognateSetEntry.setDescription(column[descriptionIdx]);
 					if(sourceIdx != -1) cognateSetEntry.setSources(Arrays.asList(column[sourceIdx].split(";")));
-					
+
 					//mapping object and its id
-					cognatesetTable.put(Integer.parseInt(column[idIdx]), cognateSetEntry);
+					cognatesetTable.put(column[idIdx], cognateSetEntry);
 				}  catch(FormattingException e) {
 					
 				}

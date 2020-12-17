@@ -15,10 +15,11 @@ public class CLDFWordlistDatabase {
 	Map<Integer, CLDFForm> idToForm; //contents of form table (using integer IDs from typically first column)
 	Map<String, CLDFLanguage> langIDToLang; //from foreign key into language table
 	Map<String, CLDFParameter> paramIDToParam; //from foreign key (concept ID) into parameters table (typically concepts.csv)
+	Map<Integer,String> originalFormIds;
 
 	//TODO: is it really needed?
 	Map<Integer, CLDFCognateJudgement> cognateIDToCognate; //cognateID to cognate object
-	Map<Integer, CLDFCognateSet> cogsetIDToCogset; //only fill this if in separate table, store within CLDFForm if it's just cognate set IDs
+	Map<String, CLDFCognateSet> cogsetIDToCogset; //only fill this if in separate table, store within CLDFForm if it's just cognate set IDs
 	public String currentPath;
 
 	public CLDFWordlistDatabase() {
@@ -26,15 +27,21 @@ public class CLDFWordlistDatabase {
 		this.paramIDToParam=new HashMap<>();
 		this.idToForm=new HashMap<>();
 		this.cognateIDToCognate=new HashMap<>();
+		this.originalFormIds=new HashMap<>();
 	}
 
 	public CLDFWordlistDatabase(Map<Integer,CLDFForm> idToForm, Map<String,CLDFLanguage> langIDToLang, Map<String,CLDFParameter> paramIDToParam,
-								Map<Integer,CLDFCognateJudgement> cognateIDToCognate, Map<Integer,CLDFCognateSet> cogsetIDToCogset) {
+								Map<Integer,CLDFCognateJudgement> cognateIDToCognate, Map<String,CLDFCognateSet> cogsetIDToCogset,Map<Integer,String> originalFormIds) {
 		this.idToForm = idToForm;
 		this.langIDToLang = langIDToLang;
 		this.paramIDToParam = paramIDToParam;
 		this.cognateIDToCognate = cognateIDToCognate;
 		this.cogsetIDToCogset = cogsetIDToCogset;
+		this.originalFormIds=originalFormIds;
+	}
+
+	public Map<Integer,String> getOriginalFormIds() {
+		return this.originalFormIds;
 	}
 
 	public void setCurrentPath(String path) {
@@ -58,12 +65,12 @@ public class CLDFWordlistDatabase {
 	}
 
 
-	public Map<Integer, Set<Integer>> getCogsetToCognates() {
-		Map<Integer, Set<Integer>> cognateSets = new HashMap<>();
+	public Map<String, Set<Integer>> getCogsetToCognates() {
+		Map<String, Set<Integer>> cognateSets = new HashMap<>();
 
 		for (Map.Entry<Integer, CLDFCognateJudgement> entry : cognateIDToCognate.entrySet()) {
 			int cognateID = entry.getKey();
-			int cogsetID = cognateIDToCognate.get(cognateID).getCognatesetReference();
+			String cogsetID = cognateIDToCognate.get(cognateID).getCognatesetReference();
 			int formID = entry.getValue().getFormReference();
 
 			cognateSets.putIfAbsent(cogsetID, new HashSet<>());
