@@ -45,7 +45,7 @@ public class CLDFImport {
 
 		try {
 			path = new File(cldfDirName);
-			possibleJsons = path.listFiles((File dir, String name) ->  name.endsWith("json")); //possible json files in the given folder
+			possibleJsons = path.listFiles((File dir, String name) ->  name.endsWith("metadata.json")); //possible json files in the given folder
 			if(possibleJsons.length == 0) { //if 0, no json found in the folder
 				throw new Error("Given folder does not contain json file!");
 			} else {
@@ -238,8 +238,10 @@ public class CLDFImport {
 			int macroaIdx = propertyColumns.containsKey("macroarea") ? columns.indexOf(propertyColumns.get("macroarea")) : -1;
 			int nameIdx = propertyColumns.containsKey("name") ? columns.indexOf(propertyColumns.get("name")) : -1;
 			int familyIdx = propertyColumns.containsKey("Family") ? columns.indexOf(propertyColumns.get("Family")) : -1;
-			int latitIdx = columns.contains("latitude") ? columns.indexOf("latitude") : -1;
-			int longitIdx = columns.contains("longitude") ? columns.indexOf("longitude") : -1;
+			int latitIdx = propertyColumns.containsKey("latitude") ? columns.indexOf(propertyColumns.get("latitude")) : -1;
+			int longitIdx = propertyColumns.containsKey("longitude") ? columns.indexOf(propertyColumns.get("longitude")) : -1;
+			if(latitIdx==-1 && columns.contains("latitude")) latitIdx=columns.indexOf("latitude");
+			if(longitIdx==-1 && columns.contains("longitude")) longitIdx=columns.indexOf("longitude");
 			//in order to fill the "properties" map, for the columns that don't have a separate filed
 			//make a list of column indecies that were used
 			List<Integer> usedColumns = Arrays.asList(idIdx, isoIdx, glottoIdx,macroaIdx , latitIdx, longitIdx, nameIdx);
