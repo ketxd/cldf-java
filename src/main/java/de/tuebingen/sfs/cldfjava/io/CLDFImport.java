@@ -75,14 +75,16 @@ public class CLDFImport {
 				String formFileName = tables.get(formTableIndex).get("url").asText();
 				String languageFileName = tables.get(languageTableIndex).get("url").asText();
 				String parameterFileName = tables.get(parameterTableIndex).get("url").asText();
-				String cognateFileName = tables.get(cognateTableIndex).get("url").asText();
 
 				//populating form, language and parameters maps (all have different methods because of different properties and object fields)
 				Map<Integer, CLDFForm> idToForm = readFormCsv(path + "/" + formFileName, createColumnPropertyMap(formTableIndex, tables));
 				Map<String, CLDFLanguage> langIDToLang = readLanguageCsv(path + "/" + languageFileName, createColumnPropertyMap(languageTableIndex, tables));
 				Map<String, CLDFParameter> paramIDToParam = readParameterCsv(path + "/" + parameterFileName, createColumnPropertyMap(parameterTableIndex, tables));
-				Map<Integer, CLDFCognateJudgement> cognateIDToCognate = readCognateCsv(path + "/" + cognateFileName, createColumnPropertyMap(cognateTableIndex, tables));
-				
+				Map<Integer, CLDFCognateJudgement> cognateIDToCognate = new HashMap<>();
+				if(cognateTableIndex != -1) {
+					String cognateFileName = tables.get(cognateTableIndex).get("url").asText();
+					cognateIDToCognate=readCognateCsv(path + "/" + cognateFileName, createColumnPropertyMap(cognateTableIndex, tables));
+				}
 				//populating Cognateset map only happens if there is a separate file for that
 				Map<String, CLDFCognateSet> cogSetIDToCogset = new HashMap<>();
 				if(cognateSetTableIndex != -1) {
