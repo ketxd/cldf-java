@@ -207,9 +207,8 @@ public class CLDFImport {
 				}    catch(FormattingException e) {
 					e.printStackTrace();
 				}
-
+				i++;
 			}
-			i++;
 			bf.close();
 
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -296,8 +295,8 @@ public class CLDFImport {
 				}   catch(FormattingException e) {
 					
 				}
+				i++;
 			}
-			i++;
 			bf.close();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace();
@@ -395,8 +394,8 @@ public class CLDFImport {
 				} catch(FormattingException e) {
 
 				}
+				i++;
 			}
-			i++;
 			bf.close();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace();
@@ -455,8 +454,8 @@ public class CLDFImport {
 				}  catch(FormattingException e) {
 					
 				}
+				i++;
 			}
-			i++;
 			bf.close();
 
 		} catch (ArrayIndexOutOfBoundsException e) {
