@@ -14,11 +14,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.tuebingen.sfs.cldfjava.data.CLDFWordlistDatabase;
 import de.tuebingen.sfs.cldfjava.data.*;
+import de.tuebingen.sfs.eie.gui.events.EtinenController;
+import de.tuebingen.sfs.eie.gui.events.EtinenLoggingEvent;
+import de.tuebingen.sfs.eie.gui.logging.ErrorMessage;
+import de.tuebingen.sfs.eie.gui.logging.FileErrorMessage;
 
 //import de.tuebingen.sfs.psl.engine.core.ModelStorePSL;
 
 public class CLDFImport {
-
+	public static EtinenController controller;
 	public static CSVParser parser;
 	public static CLDFWordlistDatabase database;
 	private static Map<String, Integer> formsOldToNew;
@@ -33,11 +37,12 @@ public class CLDFImport {
 	 * @param cldfDirName
 	 * @return
 	 */
-	public static CLDFWordlistDatabase loadDatabase(String cldfDirName) {
+	public static CLDFWordlistDatabase loadDatabase(String cldfDirName, EtinenController controller2) {
 		File path;
 		File[] possibleJsons;
 		File json;
 		byte[] mapData;
+		controller=controller2;
 		parser = new CSVParser();
 		formsOldToNew =new HashMap<>();
 		cognateIdMap=new HashMap<>();
@@ -170,7 +175,7 @@ public class CLDFImport {
 					remainedColumns.add(i);
 				}
 			}
-
+			int i=1;
 			while((line = bf.readLine()) != null) {
 				//parsed column values of each row
 				String[] column = parser.getColumns(line).toArray(new String[0]);
@@ -179,7 +184,7 @@ public class CLDFImport {
 				try {
 					//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path);
+						throw new FormattingException(line, path, i, controller);
 					}
 					//setting required fields
 					parameterEntry.setParamID(column[idIdx]);
@@ -204,6 +209,7 @@ public class CLDFImport {
 				}
 
 			}
+			i++;
 			bf.close();
 
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -256,6 +262,7 @@ public class CLDFImport {
 				}
 			}
 
+			int i=1;
 			while((line = bf.readLine()) != null) {
 				//parsed column values of each row
 				String[] column = parser.getColumns(line).toArray(new String[0]);
@@ -264,7 +271,7 @@ public class CLDFImport {
 				try {
 					//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path);
+						throw new FormattingException(line, path, i, controller);
 					}
 					//setting required fields
 					languageEntry.setLangID(column[idIdx]);
@@ -290,6 +297,7 @@ public class CLDFImport {
 					
 				}
 			}
+			i++;
 			bf.close();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace();
@@ -348,7 +356,7 @@ public class CLDFImport {
 					remainedColumns.add(i);
 				}
 			}
-
+			int i=1;
 			while((line = bf.readLine()) != null) {
 				//parsed column values of each row
 				String[] column = parser.getColumns(line).toArray(new String[0]);
@@ -357,7 +365,7 @@ public class CLDFImport {
 				try {
 					//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path);
+						throw new FormattingException(line, path, i, controller);
 					}
 					//setting required fields
 					//if form id is a string, create an integer ID
@@ -388,6 +396,7 @@ public class CLDFImport {
 
 				}
 			}
+			i++;
 			bf.close();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace();
@@ -420,6 +429,7 @@ public class CLDFImport {
 			int formIdx = columns.indexOf(propertyColumns.get("formReference"));
 			int cogsetIdx = columns.indexOf(propertyColumns.get("cognatesetReference"));
 
+			int i=1;
 			while((line = bf.readLine()) != null) {
 				//parsed column values of each row
 				String[] column = parser.getColumns(line).toArray(new String[0]);
@@ -427,7 +437,7 @@ public class CLDFImport {
 				//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 				try {
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path);
+						throw new FormattingException(line, path, i, controller);
 					}
 					if(formsOldToNew.containsKey(column[formIdx])) {
 						//setting required fields
@@ -446,6 +456,7 @@ public class CLDFImport {
 					
 				}
 			}
+			i++;
 			bf.close();
 
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -478,6 +489,7 @@ public class CLDFImport {
 			int descriptionIdx = propertyColumns.containsKey("description") ? columns.indexOf(propertyColumns.get("description")) : -1;
 			int sourceIdx = propertyColumns.containsKey("source") ? columns.indexOf(propertyColumns.get("source")) : -1;
 
+			int i=1;
 			while((line = bf.readLine()) != null) {
 				//parsed column values of each row
 				String[] column = parser.getColumns(line).toArray(new String[0]);
@@ -485,7 +497,7 @@ public class CLDFImport {
 				//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 				try {
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path);
+						throw new FormattingException(line, path, i, controller);
 					}
 					//setting required fields
 					cognateSetEntry.setCogsetID(column[idIdx]);
@@ -499,6 +511,7 @@ public class CLDFImport {
 				}  catch(FormattingException e) {
 					
 				}
+				i++;
 			}
 			bf.close();
 
@@ -521,12 +534,18 @@ public class CLDFImport {
  */
 class FormattingException extends Exception
 {
-	public FormattingException() {}
 
-	public FormattingException(String line, String path)
+	public FormattingException(String line, String path, int lineNum, EtinenController controller)
 	{
-		
-		System.err.println("ERROR in file " + path.substring(path.lastIndexOf("/")+1) +": The formatting of the row contains some errors!:");
-		System.out.println(line);
+		if(controller!=null) {
+			ErrorMessage root = new ErrorMessage("Bad data formatting", "Errors in data, such as malformed rows or missing elements.");
+			FileErrorMessage child1 = new FileErrorMessage("Malformed lines in file " + path.substring(path.lastIndexOf("/")+1), "Click \\link{here} to open the folder with problematic files");
+			child1.setPath(path.substring(0,path.lastIndexOf("/")+1));
+			child1.setController(controller);
+			ErrorMessage child2 = new ErrorMessage("Line " + lineNum, line);
+			root.setChild(child1);
+			child1.setChild(child2);
+			controller.processEvent(new EtinenLoggingEvent(root));
+		}
 	}
 }
