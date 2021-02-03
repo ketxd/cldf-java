@@ -101,11 +101,16 @@ public class CLDFImport {
 				database.currentPath = cldfDirName;
 
 			} else {
-				throw new Error("The json file doesn't contain the Wordlist module!");
+				//TODO: more details, add path to open json
+				controller.processEvent(new EtinenLoggingEvent(new ErrorMessage("The json file doesn't contain the Wordlist module!","")));
 			}
 
 		} catch (NullPointerException e) {
-			System.out.println("Error: Given folder does not exist!");
+			FileErrorMessage message = new FileErrorMessage("Json file is missing!",
+					"Check if the json file is inside of the selected folder or if it corresponds to the CLDF format. Click \\link{here} to open a folder in question");
+			message.setController(controller);
+			message.setPath(cldfDirName);
+			controller.processEvent(new EtinenLoggingEvent(message));
 			e.printStackTrace();
 		}
 		catch (IOException e) {
