@@ -21,6 +21,7 @@ public class CLDFWordlistDatabase {
 	Map<Integer, CLDFCognateJudgement> cognateIDToCognate; //cognateID to cognate object
 	Map<String, CLDFCognateSet> cogsetIDToCogset; //only fill this if in separate table, store within CLDFForm if it's just cognate set IDs
 	public String currentPath;
+	List<String[]> exceptions;
 
 	public CLDFWordlistDatabase() {
 		this.langIDToLang=new HashMap<>();
@@ -38,6 +39,14 @@ public class CLDFWordlistDatabase {
 		this.cognateIDToCognate = cognateIDToCognate;
 		this.cogsetIDToCogset = cogsetIDToCogset;
 		this.originalFormIds=originalFormIds;
+	}
+
+	public void setExceptions(List<String[]> exceptions) {
+		this.exceptions=exceptions;
+	}
+
+	public List<String[]> getExceptions() {
+		return this.exceptions;
 	}
 
 	public Map<Integer,String> getOriginalFormIds() {

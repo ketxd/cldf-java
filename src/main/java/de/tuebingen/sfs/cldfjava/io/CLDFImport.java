@@ -2,7 +2,6 @@ package de.tuebingen.sfs.cldfjava.io;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,20 +13,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.tuebingen.sfs.cldfjava.data.CLDFWordlistDatabase;
 import de.tuebingen.sfs.cldfjava.data.*;
-import de.tuebingen.sfs.eie.gui.events.EtinenController;
-import de.tuebingen.sfs.eie.gui.events.EtinenLoggingEvent;
-import de.tuebingen.sfs.eie.gui.logging.ErrorMessage;
-import de.tuebingen.sfs.eie.gui.logging.FileErrorMessage;
 
-//import de.tuebingen.sfs.psl.engine.core.ModelStorePSL;
 
 public class CLDFImport {
-	public static EtinenController controller;
 	public static CSVParser parser;
 	public static CLDFWordlistDatabase database;
 	private static Map<String, Integer> formsOldToNew;
 	private static Map<Integer, String> formsNewToOld;
 	private static Map<String, Integer> cognateIdMap;
+	private static List<String[]> exceptions;
 	/**
 	 * TODO: This should build a CLDFDatabase object (see structure and interface there) from a directory with CLDF files.
 	 *       The module we want to fully support is described here: https://github.com/cldf/cldf/tree/master/modules/Wordlist
@@ -37,22 +31,22 @@ public class CLDFImport {
 	 * @param cldfDirName
 	 * @return
 	 */
-	public static CLDFWordlistDatabase loadDatabase(String cldfDirName, EtinenController controller2) {
+	public static CLDFWordlistDatabase loadDatabase(String cldfDirName) {
 		File path;
 		File[] possibleJsons;
 		File json;
 		byte[] mapData;
-		controller=controller2;
 		parser = new CSVParser();
 		formsOldToNew =new HashMap<>();
 		cognateIdMap=new HashMap<>();
 		formsNewToOld =new HashMap<>();
+		exceptions = new ArrayList<>();
 
 		try {
 			path = new File(cldfDirName);
 			possibleJsons = path.listFiles((File dir, String name) ->  name.endsWith("metadata.json")); //possible json files in the given folder
 			if(possibleJsons.length == 0) { //if 0, no json found in the folder
-				throw new Error("Given folder does not contain json file!");
+				throw new Error("folder");
 			} else {
 				json = possibleJsons[0];
 			}
@@ -101,22 +95,18 @@ public class CLDFImport {
 				database.currentPath = cldfDirName;
 
 			} else {
-				//TODO: more details, add path to open json
-				controller.processEvent(new EtinenLoggingEvent(new ErrorMessage("The json file doesn't contain the Wordlist module!","")));
+				throw new Error("wordlist");
 			}
-
-		} catch (NullPointerException e) {
-			FileErrorMessage message = new FileErrorMessage("Json file is missing!",
-					"Check if the json file is inside of the selected folder or if it corresponds to the CLDF format. Click \\link{here} to open a folder in question");
-			message.setController(controller);
-			message.setPath(cldfDirName);
-			controller.processEvent(new EtinenLoggingEvent(message));
+		} catch (Error e) {
+			exceptions.add(new String[]{e.getMessage(),cldfDirName});
+		} catch (NullPointerException| IOException e) {
+			exceptions.add(new String[]{"else"});
 			e.printStackTrace();
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		if(database==null) {
+			database = new CLDFWordlistDatabase();
 		}
-
+		database.setExceptions(exceptions);
 		return database;
 	}
 
@@ -189,7 +179,7 @@ public class CLDFImport {
 				try {
 					//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path, i, controller);
+						throw new Exception();
 					}
 					//setting required fields
 					parameterEntry.setParamID(column[idIdx]);
@@ -209,18 +199,14 @@ public class CLDFImport {
 					parameterEntry.setProperties(properties);
 					//mapping object and its id
 					parameterTable.put(column[idIdx], parameterEntry);
-				}    catch(FormattingException e) {
-					e.printStackTrace();
+				} catch(Exception e) {
+					exceptions.add(new String[]{"row",path,i+"",line});
 				}
 				i++;
 			}
 			bf.close();
 
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ArrayIndexOutOfBoundsException | IOException e) {
 			e.printStackTrace();
 		}
 
@@ -275,7 +261,7 @@ public class CLDFImport {
 				try {
 					//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path, i, controller);
+						throw new Exception();
 					}
 					//setting required fields
 					languageEntry.setLangID(column[idIdx]);
@@ -297,17 +283,13 @@ public class CLDFImport {
 					languageEntry.setProperties(properties);
 					//mapping object and its id
 					languageTable.put(column[idIdx], languageEntry);
-				}   catch(FormattingException e) {
-					
+				}   catch(Exception e) {
+					exceptions.add(new String[]{"row",path,i+"",line});
 				}
 				i++;
 			}
 			bf.close();
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ArrayIndexOutOfBoundsException | IOException e) {
 			e.printStackTrace();
 		}
 
@@ -369,7 +351,7 @@ public class CLDFImport {
 				try {
 					//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path, i, controller);
+						throw new Exception();
 					}
 					//setting required fields
 					//if form id is a string, create an integer ID
@@ -396,17 +378,13 @@ public class CLDFImport {
 					//mapping object and its id
 					formTable.put(formID, formEntry);
 					formID++;
-				} catch(FormattingException e) {
-
+				} catch(Exception e) {
+					exceptions.add(new String[]{"row",path,i+"",line});
 				}
 				i++;
 			}
 			bf.close();
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ArrayIndexOutOfBoundsException | IOException e) {
 			e.printStackTrace();
 		}
 
@@ -441,7 +419,7 @@ public class CLDFImport {
 				//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 				try {
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path, i, controller);
+						throw new Exception();
 					}
 					if(formsOldToNew.containsKey(column[formIdx])) {
 						//setting required fields
@@ -456,18 +434,14 @@ public class CLDFImport {
 						cognateTable.put(cognateId, cognateEntry);
 						cognateId++;
 					}
-				}  catch(FormattingException e) {
-					
+				}  catch(Exception e) {
+					exceptions.add(new String[]{"row",path,i+"",line});
 				}
 				i++;
 			}
 			bf.close();
 
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ArrayIndexOutOfBoundsException | IOException e) {
 			e.printStackTrace();
 		}
 		cognateIdMap.clear();
@@ -501,7 +475,7 @@ public class CLDFImport {
 				//if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
 				try {
 					if(column.length != columns.size()) {
-						throw new FormattingException(line, path, i, controller);
+						throw new Exception();
 					}
 					//setting required fields
 					cognateSetEntry.setCogsetID(column[idIdx]);
@@ -512,44 +486,18 @@ public class CLDFImport {
 
 					//mapping object and its id
 					cognatesetTable.put(column[idIdx], cognateSetEntry);
-				}  catch(FormattingException e) {
-					
+				}  catch(Exception e) {
+					exceptions.add(new String[]{"row",path,i+"",line});
 				}
 				i++;
 			}
 			bf.close();
 
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ArrayIndexOutOfBoundsException | IOException e) {
 			e.printStackTrace();
 		}
 
 		return cognatesetTable;
 	}
 
-}
-
-/**
- * @author kate
- * An exception class for detecting problems in csv file formatting
- */
-class FormattingException extends Exception
-{
-
-	public FormattingException(String line, String path, int lineNum, EtinenController controller)
-	{
-		if(controller!=null) {
-			ErrorMessage root = new ErrorMessage("Bad data formatting", "Errors in data, such as malformed rows or missing elements.");
-			FileErrorMessage child1 = new FileErrorMessage("Malformed lines in file " + path.substring(path.lastIndexOf("/")+1), "Click \\link{here} to open the folder with problematic files");
-			child1.setPath(path.substring(0,path.lastIndexOf("/")+1));
-			child1.setController(controller);
-			ErrorMessage child2 = new ErrorMessage("Line " + lineNum, line);
-			root.setChild(child1);
-			child1.setChild(child2);
-			controller.processEvent(new EtinenLoggingEvent(root));
-		}
-	}
 }
