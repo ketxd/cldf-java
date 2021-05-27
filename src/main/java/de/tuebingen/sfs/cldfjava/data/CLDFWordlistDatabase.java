@@ -114,4 +114,15 @@ public class CLDFWordlistDatabase {
 		}
 		return null;
 	}
+
+	public CLDFForm getRandomFormForLanguage(String langID) {
+		ArrayList<CLDFForm> allFormsOfTargetLanguage = new ArrayList<>();
+		for (CLDFForm form : idToForm.values()) {
+			if (form.getLangID().equals(langID)) {
+				allFormsOfTargetLanguage.add(form);
+			}
+		}
+		int randomIndex = (int) (Math.random() * allFormsOfTargetLanguage.size());
+		return allFormsOfTargetLanguage.get(randomIndex);
+	}
 }
