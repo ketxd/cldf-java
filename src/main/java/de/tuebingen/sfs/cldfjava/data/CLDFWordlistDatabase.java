@@ -16,6 +16,8 @@ public class CLDFWordlistDatabase {
 	Map<String, CLDFLanguage> langIDToLang; //from foreign key into language table
 	Map<String, CLDFParameter> paramIDToParam; //from foreign key (concept ID) into parameters table (typically concepts.csv)
 	Map<Integer,String> originalFormIds;
+	List<String> langIDs; // store langIDs as ordered list to facilitate indexing
+	Map<String, Map<String, List<CLDFForm>>> formsByLanguageByParamID;
 
 	//TODO: is it really needed?
 	Map<Integer, CLDFCognateJudgement> cognateIDToCognate; //cognateID to cognate object
@@ -29,6 +31,7 @@ public class CLDFWordlistDatabase {
 		this.idToForm=new HashMap<>();
 		this.cognateIDToCognate=new HashMap<>();
 		this.originalFormIds=new HashMap<>();
+		this.langIDs=new ArrayList<>();
 	}
 
 	public CLDFWordlistDatabase(Map<Integer,CLDFForm> idToForm, Map<String,CLDFLanguage> langIDToLang, Map<String,CLDFParameter> paramIDToParam,
@@ -39,6 +42,7 @@ public class CLDFWordlistDatabase {
 		this.cognateIDToCognate = cognateIDToCognate;
 		this.cogsetIDToCogset = cogsetIDToCogset;
 		this.originalFormIds=originalFormIds;
+		this.langIDs = new ArrayList<>(langIDToLang.keySet());
 	}
 
 	public void setExceptions(List<String[]> exceptions) {
@@ -71,6 +75,10 @@ public class CLDFWordlistDatabase {
 
 	public Map<String, CLDFParameter> getConceptMap() {
 		return paramIDToParam;
+	}
+
+	public List<String> getLangIDs() {
+		return langIDs;
 	}
 
 
@@ -124,5 +132,42 @@ public class CLDFWordlistDatabase {
 		}
 		int randomIndex = (int) (Math.random() * allFormsOfTargetLanguage.size());
 		return allFormsOfTargetLanguage.get(randomIndex);
+	}
+
+	public Map<String, List<CLDFForm>> getFormsByLanguageByParamID(String paramID) {
+		if (formsByLanguageByParamID == null) {
+			for (CLDFForm form : idToForm.values()) {
+				String langID = form.getLangID();
+				String localParamID = form.getParamID();
+				if (formsByLanguageByParamID.containsKey(localParamID)) {
+					Map<String, List<CLDFForm>> formsByLang = formsByLanguageByParamID.get(localParamID);
+					if (formsByLang.containsKey(langID)) {
+						List<CLDFForm> forms = formsByLang.get(langID);
+						forms.add(form);
+					} else {
+						List<CLDFForm> forms = new ArrayList<>();
+						forms.add(form);
+						formsByLang.put(langID, forms);
+					}
+				} else {
+					List<CLDFForm> forms = new ArrayList<>();
+					forms.add(form);
+					Map<String, List<CLDFForm>> formsByLang = new HashMap<>();
+					formsByLang.put(langID, forms);
+					formsByLanguageByParamID.put(localParamID, formsByLang);
+				}
+			}
+		}
+
+		return formsByLanguageByParamID.get(paramID);
+	}
+
+	public List<CLDFForm> getFormsByParamID(String paramID) {
+		Map<String, List<CLDFForm>> conceptMapByLanguage = getFormsByLanguageByParamID(paramID);
+		List<List<CLDFForm>> conceptsByLanguage = new ArrayList<>(conceptMapByLanguage.values());
+		// "flatten" List of Lists to one List containing all values
+		return conceptsByLanguage.stream()
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
 	}
 }

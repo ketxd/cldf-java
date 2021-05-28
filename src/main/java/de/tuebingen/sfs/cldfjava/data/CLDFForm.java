@@ -87,6 +87,5 @@ public class CLDFForm {
 	public String toString() {
 		return id + "\t" + form + "\t" + langID + "\t" + paramID + "\t" + properties;
 	}
-	
 
 }
