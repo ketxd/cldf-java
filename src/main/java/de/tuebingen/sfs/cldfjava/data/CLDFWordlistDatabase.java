@@ -18,6 +18,7 @@ public class CLDFWordlistDatabase {
 	Map<Integer,String> originalFormIds;
 	List<String> langIDs; // store langIDs as ordered list to facilitate indexing
 	Map<String, Map<String, List<CLDFForm>>> formsByLanguageByParamID;
+	Map<String, List<CLDFForm>> formsByLanguage;
 
 	//TODO: is it really needed?
 	Map<Integer, CLDFCognateJudgement> cognateIDToCognate; //cognateID to cognate object
@@ -124,18 +125,39 @@ public class CLDFWordlistDatabase {
 	}
 
 	public CLDFForm getRandomFormForLanguage(String langID) {
-		ArrayList<CLDFForm> allFormsOfTargetLanguage = new ArrayList<>();
+		if (formsByLanguage == null) {
+			cacheFormsByLanguage();
+		}
+		List<CLDFForm> allFormsOfTargetLanguage = formsByLanguage.get(langID);
+
+		CLDFForm randomForm;
+		try {
+			int randomIndex = (int) (Math.random() * allFormsOfTargetLanguage.size());
+			randomForm = allFormsOfTargetLanguage.get(randomIndex);
+		} catch (Exception e) {
+			randomForm = null; // return null if something goes wrong
+		}
+		return randomForm;
+	}
+
+	public void cacheFormsByLanguage() {
+		formsByLanguage = new HashMap<>();
 		for (CLDFForm form : idToForm.values()) {
-			if (form.getLangID().equals(langID)) {
-				allFormsOfTargetLanguage.add(form);
+			String langID = form.getLangID();
+			if (formsByLanguage.containsKey(langID)) {
+				List<CLDFForm> forms = formsByLanguage.get(langID);
+				forms.add(form);
+			} else {
+				List<CLDFForm> forms = new ArrayList<>();
+				forms.add(form);
+				formsByLanguage.put(langID, forms);
 			}
 		}
-		int randomIndex = (int) (Math.random() * allFormsOfTargetLanguage.size());
-		return allFormsOfTargetLanguage.get(randomIndex);
 	}
 
 	public Map<String, List<CLDFForm>> getFormsByLanguageByParamID(String paramID) {
 		if (formsByLanguageByParamID == null) {
+			formsByLanguageByParamID = new HashMap<>();
 			for (CLDFForm form : idToForm.values()) {
 				String langID = form.getLangID();
 				String localParamID = form.getParamID();
