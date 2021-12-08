@@ -23,7 +23,6 @@ import java.util.Map;
 
 
 public class CLDFImport {
-    public static CSVParser parser;
     public static CLDFWordlistDatabase database;
     private static Map<String, Integer> formsOldToNew;
     private static Map<Integer, String> formsNewToOld;
@@ -45,7 +44,6 @@ public class CLDFImport {
         File[] possibleJsons;
         File json;
         byte[] mapData;
-        parser = new CSVParser();
         formsOldToNew = new HashMap<>();
         cognateIdMap = new HashMap<>();
         formsNewToOld = new HashMap<>();
@@ -184,7 +182,7 @@ public class CLDFImport {
             int i = 1;
             while ((line = bf.readLine()) != null) {
                 //parsed column values of each row
-                String[] column = parser.getColumns(line).toArray(new String[0]);
+                String[] column = CSVParser.getColumns(line).toArray(new String[0]);
                 CLDFParameter parameterEntry = new CLDFParameter();
                 Map<String, String> properties = new HashMap<>();
                 try {
@@ -267,7 +265,7 @@ public class CLDFImport {
             int i = 1;
             while ((line = bf.readLine()) != null) {
                 //parsed column values of each row
-                String[] column = parser.getColumns(line).toArray(new String[0]);
+                String[] column = CSVParser.getColumns(line).toArray(new String[0]);
                 CLDFLanguage languageEntry = new CLDFLanguage();
                 Map<String, String> properties = new HashMap<>();
                 try {
@@ -360,7 +358,7 @@ public class CLDFImport {
             int i = 1;
             while ((line = bf.readLine()) != null) {
                 //parsed column values of each row
-                String[] column = parser.getColumns(line).toArray(new String[0]);
+                String[] column = CSVParser.getColumns(line).toArray(new String[0]);
                 CLDFForm formEntry = new CLDFForm();
                 Map<String, String> properties = new HashMap<>();
                 try {
@@ -430,7 +428,7 @@ public class CLDFImport {
             int i = 1;
             while ((line = bf.readLine()) != null) {
                 //parsed column values of each row
-                String[] column = parser.getColumns(line).toArray(new String[0]);
+                String[] column = CSVParser.getColumns(line).toArray(new String[0]);
                 CLDFCognateJudgement cognateEntry = new CLDFCognateJudgement();
                 //if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
                 try {
@@ -487,7 +485,7 @@ public class CLDFImport {
             int i = 1;
             while ((line = bf.readLine()) != null) {
                 //parsed column values of each row
-                String[] column = parser.getColumns(line).toArray(new String[0]);
+                String[] column = CSVParser.getColumns(line).toArray(new String[0]);
                 CLDFCognateSet cognateSetEntry = new CLDFCognateSet();
                 //if the amount of column names and the amount of retrieved column values are not the same, there must be some error in row formatting
                 try {

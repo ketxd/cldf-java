@@ -1,21 +1,70 @@
 package de.tuebingen.sfs.cldfjava.io;
 
+import java.io.*;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
- * A class to imitate FSA for CSV parsing
+ * A simple CSV parser based on manual implementation of a regular grammar.
  */
 public class CSVParser {
-    public CSVParser() {
+    BufferedReader in;
+    List<String> columnTitles = null;
+    String nextLine = null;
+
+    public CSVParser(InputStream rawInputStream, boolean hasHeader) throws IOException {
+        this.in = new BufferedReader(new InputStreamReader(rawInputStream));
+        if (hasHeader) {
+            columnTitles = getColumns(in.readLine());
+        }
+        nextLine = in.readLine();
     }
 
+    public void close() {
+        try {
+            in.close();
+        } catch (IOException e) {
+            System.err.println("WARNING: unexpected IO exception when closing CSVParser!");
+            e.printStackTrace();
+        }
+    }
+
+    public String getColumnTitle(int colIdx) {
+        if (columnTitles == null) {
+            return "Column " + colIdx;
+        }
+        return columnTitles.get(colIdx);
+    }
+
+    public boolean hasNextRecord() {
+        return (nextLine != null);
+    }
+
+    public List<String> getNextRecordAsList() throws IOException {
+        List<String> nextRecord = getColumns(nextLine);
+        nextLine = in.readLine();
+        return nextRecord;
+    }
+
+    public Map<String,String> getNextRecordAsMap() throws IOException {
+        List<String> fieldValues = getColumns(nextLine);
+        nextLine = in.readLine();
+        Map<String,String> nextRecord = new TreeMap<String,String>();
+        for (int i = 0; i < fieldValues.size(); i++) {
+            nextRecord.put(getColumnTitle(i), fieldValues.get(i));
+        }
+        return nextRecord;
+    }
+
+    public enum FSAState {NORMAL_MODE, QUOTES_MODE, DOUBLE_QUOTES_MODE;}
     /**
-     * @param A row string from csv file
+     * @param csvRow A row string from csv file
      * @return list of parsed column values
      */
-    public List<String> getColumns(String csvRow) {
+    public static List<String> getColumns(String csvRow) {
         CharSequence row = csvRow;
 
         FSAState currentState = FSAState.NORMAL_MODE;
@@ -92,8 +141,6 @@ public class CSVParser {
         }
         return columns;
     }
-
-    public enum FSAState {NORMAL_MODE, QUOTES_MODE, DOUBLE_QUOTES_MODE;}
 
 }
 
