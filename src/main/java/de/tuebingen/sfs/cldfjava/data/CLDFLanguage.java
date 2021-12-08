@@ -19,10 +19,10 @@ public class CLDFLanguage {
         iso = "";
         glottocode = "";
         name = "";
+        family = "";
         latitude = Float.NaN;
         longitude = Float.NaN;
         properties = new HashMap<>();
-
     }
 
     public String getName() {
