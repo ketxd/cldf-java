@@ -372,7 +372,7 @@ public class CLDFImport {
                     formsNewToOld.put(formID, column[idIdx]);
                     formEntry.setId(formID);
                     formEntry.setLangID(column[langIdx]);
-                    formEntry.setParamID(column[paramIdx]);
+                    formEntry.setParamIDs(Arrays.asList(column[paramIdx].split(";")));
 
                     //settings fields that aren't required by checking whether they exist
                     if (formIdx != -1) formEntry.setForm(column[formIdx]);

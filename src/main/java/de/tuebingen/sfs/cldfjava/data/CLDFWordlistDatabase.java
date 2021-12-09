@@ -160,23 +160,25 @@ public class CLDFWordlistDatabase {
 			formsByLanguageByParamID = new HashMap<>();
 			for (CLDFForm form : idToForm.values()) {
 				String langID = form.getLangID();
-				String localParamID = form.getParamID();
-				if (formsByLanguageByParamID.containsKey(localParamID)) {
-					Map<String, List<CLDFForm>> formsByLang = formsByLanguageByParamID.get(localParamID);
-					if (formsByLang.containsKey(langID)) {
-						List<CLDFForm> forms = formsByLang.get(langID);
-						forms.add(form);
+				List<String> conceptsForForm = form.getParamIDs();
+				for (String conceptForForm : conceptsForForm) {
+					if (formsByLanguageByParamID.containsKey(conceptForForm)) {
+						Map<String, List<CLDFForm>> formsByLang = formsByLanguageByParamID.get(conceptForForm);
+						if (formsByLang.containsKey(langID)) {
+							List<CLDFForm> forms = formsByLang.get(langID);
+							forms.add(form);
+						} else {
+							List<CLDFForm> forms = new ArrayList<>();
+							forms.add(form);
+							formsByLang.put(langID, forms);
+						}
 					} else {
 						List<CLDFForm> forms = new ArrayList<>();
 						forms.add(form);
+						Map<String, List<CLDFForm>> formsByLang = new HashMap<>();
 						formsByLang.put(langID, forms);
+						formsByLanguageByParamID.put(conceptForForm, formsByLang);
 					}
-				} else {
-					List<CLDFForm> forms = new ArrayList<>();
-					forms.add(form);
-					Map<String, List<CLDFForm>> formsByLang = new HashMap<>();
-					formsByLang.put(langID, forms);
-					formsByLanguageByParamID.put(localParamID, formsByLang);
 				}
 			}
 		}

@@ -1,12 +1,16 @@
 package de.tuebingen.sfs.cldfjava.data;
 
+import de.jdellert.iwsa.util.io.StringUtils;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CLDFForm {
     int id; //the id used to reference forms in other tables (e.g. cognates.csv or borrowings.csv)
     String langID; //Language_ID
-    String paramID; //Parameter_ID
+    List<String> paramIDs; //Parameter_IDs
     String form;
     String origValue; //Value
     String comment;
@@ -18,7 +22,7 @@ public class CLDFForm {
     public CLDFForm() {
         id = -1;
         langID = "";
-        paramID = "";
+        paramIDs = new ArrayList<>();
         form = "";
         origValue = "";
         comment = "";
@@ -91,16 +95,20 @@ public class CLDFForm {
         this.langID = langID;
     }
 
-    public String getParamID() {
-        return paramID;
+    public List<String> getParamIDs() {
+        return paramIDs;
     }
 
-    public void setParamID(String paramID) {
-        this.paramID = paramID;
+    public void setParamIDs(List<String> paramIDs) {
+        this.paramIDs = paramIDs;
+    }
+
+    public void addParamID(String paramID) {
+        this.paramIDs.add(paramID);
     }
 
     public String toString() {
-        return id + "\t" + form + "\t" + langID + "\t" + paramID + "\t" + properties;
+        return id + "\t" + form + "\t" + langID + "\t" + StringUtils.join("; ", paramIDs) + "\t" + properties;
     }
 
 
