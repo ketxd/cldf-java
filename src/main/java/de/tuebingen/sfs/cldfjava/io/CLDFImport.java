@@ -286,7 +286,7 @@ public class CLDFImport {
                     if (longitIdx != -1)
                         languageEntry.setLongitude(column[latitIdx].isEmpty() ? Float.NaN : Float.parseFloat(column[longitIdx])); //if the value is empty, indication for a Float type
 
-                    //for the indecies of remained columns, put them into a property map
+                    //for the indices of remained columns, put them into a property map
                     for (int j = 0; j < remainedColumns.size(); j++) {
                         String colVal = column[remainedColumns.get(j)];
                         properties.put(columns.get(remainedColumns.get(j)), colVal);
@@ -375,13 +375,13 @@ public class CLDFImport {
                     formEntry.setParamIDs(Arrays.asList(column[paramIdx].split(";")));
 
                     //settings fields that aren't required by checking whether they exist
-                    if (formIdx != -1) formEntry.setForm(column[formIdx]);
+                    if (formIdx != -1) formEntry.setForm(IPAFormCanonization.process(column[formIdx]));
                     if (valueIdx != -1) formEntry.setOrigValue(column[valueIdx]);
                     if (commentIdx != -1) formEntry.setComment(column[commentIdx]);
                     if (segmentsIdx != -1) formEntry.setSegments(column[segmentsIdx].split(" "));
                     if (orthoIdx != -1) formEntry.setOrthography(column[orthoIdx]);
 
-                    //for the indecies of remained columns, put them into a property map
+                    //for the indices of remained columns, put them into a property map
                     for (int j = 0; j < remainedColumns.size(); j++) {
                         String colVal = column[remainedColumns.get(j)].isEmpty() ? "" : column[remainedColumns.get(j)];
                         properties.put(columns.get(remainedColumns.get(j)), colVal);
@@ -514,5 +514,4 @@ public class CLDFImport {
 
         return cognatesetTable;
     }
-
 }
