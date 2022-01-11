@@ -19,7 +19,7 @@ public class IPAFormCanonization {
         replacements.put('ê', "ê");
         replacements.put('ì', "ì");
         replacements.put('í', "í");
-        replacements.put('î', "i");
+        replacements.put('î', "î");
         replacements.put('ò', "ò");
         replacements.put('ó', "ó");
         replacements.put('ô', "ô");

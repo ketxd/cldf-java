@@ -345,11 +345,11 @@ public class CLDFImport {
             }
 
             //in order to fill the "properties" map, for the columns that don't have a separate filed
-            //make a list of column indecies that were used
+            //make a list of column indices that were used
             List<Integer> usedColumns = Arrays.asList(idIdx, langIdx, paramIdx, formIdx, valueIdx, commentIdx, segmentsIdx, orthoIdx);
             List<Integer> remainedColumns = new ArrayList<>();
 
-            //fill a new list with unused columns with the remaining indecies
+            //fill a new list with unused columns with the remaining indices
             for (int i = 0; i < columns.size(); i++) {
                 if (!usedColumns.contains(i)) {
                     remainedColumns.add(i);
@@ -378,7 +378,7 @@ public class CLDFImport {
                     if (formIdx != -1) formEntry.setForm(IPAFormCanonization.process(column[formIdx]));
                     if (valueIdx != -1) formEntry.setOrigValue(column[valueIdx]);
                     if (commentIdx != -1) formEntry.setComment(column[commentIdx]);
-                    if (segmentsIdx != -1) formEntry.setSegments(column[segmentsIdx].split(" "));
+                    if (segmentsIdx != -1) formEntry.setSegments(IPAFormCanonization.process(column[segmentsIdx]).split(" "));
                     if (orthoIdx != -1) formEntry.setOrthography(column[orthoIdx]);
 
                     //for the indices of remained columns, put them into a property map
@@ -420,7 +420,7 @@ public class CLDFImport {
             bf = new BufferedReader(new FileReader(path));
             List<String> columns = Arrays.asList(bf.readLine().split(",")); //all columns are split by comma
 
-            //retrieving column indecies of each property, that will help us extract values and fill Object fields. -1 needed when the field is not required, and therefore won't be extracted if not found
+            //retrieving column indices of each property, that will help us extract values and fill Object fields. -1 needed when the field is not required, and therefore won't be extracted if not found
             int idIdx = columns.indexOf(propertyColumns.get("id"));
             int formIdx = columns.indexOf(propertyColumns.get("formReference"));
             int cogsetIdx = columns.indexOf(propertyColumns.get("cognatesetReference"));
