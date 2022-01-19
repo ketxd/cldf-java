@@ -10,29 +10,69 @@ public class IPAFormCanonization {
         replacements = new HashMap<>();
         replacements.put('g', "ɡ"); //more correct way of encoding the IPA symbol (stable glyph properties)
         //various Unicode codepoints that should be canonized as combinations of base glyphs and combining chars
-        replacements.put('à', "à");
+        // acute accent
         replacements.put('á', "á");
-        replacements.put('â', "â");
-        replacements.put('ã', "ã");
-        replacements.put('è', "è");
         replacements.put('é', "é");
-        replacements.put('ê', "ê");
-        replacements.put('ì', "ì");
         replacements.put('í', "í");
-        replacements.put('î', "î");
-        replacements.put('ò', "ò");
         replacements.put('ó', "ó");
-        replacements.put('ô', "ô");
-        replacements.put('õ', "õ");
-        replacements.put('ù', "ù");
         replacements.put('ú', "ú");
-        replacements.put('û', "û");
         replacements.put('ý', "ý");
-        replacements.put('ĩ', "ĩ");
-        replacements.put('ũ', "ũ");
-        replacements.put('ẽ', "ẽ");
+        // grave accent
+        replacements.put('à', "à");
+        replacements.put('è', "è");
+        replacements.put('ì', "ì");
+        replacements.put('ò', "ò");
+        replacements.put('ù', "ù");
         replacements.put('ỳ', "ỳ");
-        replacements.put('ỹ', "y");
+        // double acute
+        replacements.put('ő', "ő");
+        replacements.put('ű', "ű");
+        // double grave
+        replacements.put('ȁ', "ȁ");
+        replacements.put('ȅ', "ȅ");
+        replacements.put('ȉ', "ȉ");
+        replacements.put('ȍ', "ȍ");
+        replacements.put('ȕ', "ȕ");
+        // circumflex
+        replacements.put('â', "â"); 
+        replacements.put('ê', "ê");
+        replacements.put('î', "î");
+        replacements.put('ô', "ô");
+        replacements.put('û', "û");
+        replacements.put('ŷ', "ŷ");
+        // caron
+        replacements.put('ǎ', "ǎ");
+        replacements.put('ě', "ě");
+        replacements.put('ǐ', "ǐ");
+        replacements.put('ǒ', "ǒ");
+        replacements.put('ǔ', "ǔ");
+        // trema
+        replacements.put('ä', "ä");
+        replacements.put('ë', "ë");
+        replacements.put('ï', "ï");
+        replacements.put('ö', "ö");
+        replacements.put('ü', "ü");
+        replacements.put('ÿ', "ÿ");
+        // tilde
+        replacements.put('ã', "ã");
+        replacements.put('ẽ', "ẽ");
+        replacements.put('ĩ', "ĩ");
+        replacements.put('õ', "õ");
+        replacements.put('ũ', "ũ");
+        replacements.put('ỹ', "ỹ");
+        // macron
+        replacements.put('ā', "ā");
+        replacements.put('ē', "ē");
+        replacements.put('ī', "ī");
+        replacements.put('ō', "ō");
+        replacements.put('ū', "ū");
+        replacements.put('ȳ', "ȳ");
+        // breve
+        replacements.put('ă', "");
+        replacements.put('ĕ', "");
+        replacements.put('ĭ', "");
+        replacements.put('ŏ', "");
+        replacements.put('ŭ', "");
     }
 
     public static String process(String rawForm) {
