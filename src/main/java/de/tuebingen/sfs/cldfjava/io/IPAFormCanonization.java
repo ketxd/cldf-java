@@ -68,11 +68,13 @@ public class IPAFormCanonization {
         replacements.put('ū', "ū");
         replacements.put('ȳ', "ȳ");
         // breve
-        replacements.put('ă', "");
-        replacements.put('ĕ', "");
-        replacements.put('ĭ', "");
-        replacements.put('ŏ', "");
-        replacements.put('ŭ', "");
+        replacements.put('ă', "ǎ");
+        replacements.put('ĕ', "ě");
+        replacements.put('ĭ', "ǐ");
+        replacements.put('ŏ', "ǒ");
+        replacements.put('ŭ', "ǔ");
+        // exclamation mark vs. click
+        replacements.put('!', "ǃ");
     }
 
     public static String process(String rawForm) {
