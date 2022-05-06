@@ -1,7 +1,6 @@
 package de.tuebingen.sfs.cldfjava.io;
 
 import java.io.*;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

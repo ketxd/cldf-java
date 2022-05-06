@@ -1,6 +1,6 @@
 package de.tuebingen.sfs.cldfjava.data;
 
-import de.jdellert.iwsa.util.io.StringUtils;
+import de.tuebingen.sfs.cldfjava.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
