@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="CLDF!!!! - %m%n" />
+        </Console>
+        <File name="FileOut" fileName="${sys:user.home}/.etinen/log/etinen.log" immediateFlush="true" append="false">
+            <PatternLayout pattern="CLDF!!!! - %msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="Console" level="info" />
+<!--            <AppenderRef ref="FileOut" level="debug"/>-->
+        </Root>
+    </Loggers>
+</Configuration>
