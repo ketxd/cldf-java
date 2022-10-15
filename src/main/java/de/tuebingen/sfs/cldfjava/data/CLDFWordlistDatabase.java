@@ -81,6 +81,13 @@ public class CLDFWordlistDatabase {
 		return langIDs;
 	}
 
+	public List<CLDFForm> getFormsByLanguage(String key) {
+		if (formsByLanguage == null) {
+			cacheFormsByLanguage();
+		}
+		return formsByLanguage.get(key);
+	}
+
 
     public Map<String, Set<Integer>> getCogsetToCognates() {
         Map<String, Set<Integer>> cognateSets = new HashMap<>();
