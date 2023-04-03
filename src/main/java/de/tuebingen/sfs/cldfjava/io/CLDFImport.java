@@ -15,11 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class CLDFImport {
@@ -425,6 +421,8 @@ public class CLDFImport {
             int formIdx = columns.indexOf(propertyColumns.get("formReference"));
             int cogsetIdx = columns.indexOf(propertyColumns.get("cognatesetReference"));
 
+            Set<Integer> usedFormIds = new HashSet<>();
+
             int i = 1;
             while ((line = bf.readLine()) != null) {
                 //parsed column values of each row
@@ -436,17 +434,27 @@ public class CLDFImport {
                         throw new Exception();
                     }
                     if (formsOldToNew.containsKey(column[formIdx])) {
+                        // skip lines where a form ID was already assigned to a cogset.
+                        int newFormId = formsOldToNew.get(column[formIdx]);
+                        if (usedFormIds.contains(newFormId)) {
+                            System.err.println("WARNING: CLDF form " + column[formIdx] + " was already assigned to " +
+                                    "a cognate set. Disregarding further cognacy judgements for this Form ID.");
+                            continue;
+                        }
+
                         //setting required fields
                         int currentCogset = -1;
                         cognateIdMap.put(column[idIdx], cognateId);
                         cognateEntry.setCognateID(cognateId);
-                        cognateEntry.setFormReference(formsOldToNew.get(column[formIdx]));
+                        cognateEntry.setFormReference(newFormId);
                         cognateEntry.setCognatesetReference(column[cogsetIdx]);
 
 
                         //mapping object and its id
                         cognateTable.put(cognateId, cognateEntry);
                         cognateId++;
+
+                        usedFormIds.add(newFormId);
                     }
                 } catch (Exception e) {
                     exceptions.add(new String[]{"row", path, i + "", line});
